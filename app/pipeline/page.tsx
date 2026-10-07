@@ -6,8 +6,30 @@ import { useStore } from "@/lib/store";
 import KpiRow from "@/components/ui/KpiRow";
 import DataTable, { Column } from "@/components/ui/DataTable";
 import Badge from "@/components/ui/Badge";
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, Plus, CalendarClock, CalendarCheck2, CalendarX2 } from "lucide-react";
 import type { Deal } from "@/lib/data";
+
+function MeetingCell({ d }: { d: Deal }) {
+  if (d.meetingStatus === "Scheduled")
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+        <CalendarClock size={12} /> {d.meetingDate || "Scheduled"}
+      </span>
+    );
+  if (d.meetingStatus === "Completed")
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[11px] font-medium text-green-700">
+        <CalendarCheck2 size={12} /> Met{d.meetingDate ? ` · ${d.meetingDate}` : ""}
+      </span>
+    );
+  if (d.meetingStatus === "No-show")
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-medium text-red-600">
+        <CalendarX2 size={12} /> No-show
+      </span>
+    );
+  return <span className="text-[12px] text-ink-300">Not scheduled</span>;
+}
 
 type FilterKey = "Qualified" | "Won" | "Lost" | "All";
 const FILTERS: FilterKey[] = ["Qualified", "Won", "Lost", "All"];
@@ -24,7 +46,7 @@ function newDeal(): Deal {
     id, name: "New opportunity", client: "New Prospect", owner: "",
     stage: "New Leads", channel: "Cold Email", value: 0, probability: 10, closeDate: "",
     targetStage: "Qualified", contactName: "", email: "", phone: "", website: "",
-    conversationStatus: "Not Started", meetingStatus: "Not Scheduled", closeStatus: "Open",
+    conversationStatus: "Not Started", meetingStatus: "Not Scheduled", meetingDate: "", closeStatus: "Open",
     nextStep: "", notes: "", activities: [],
   };
 }
@@ -53,6 +75,7 @@ export default function PipelinePage() {
     { key: "client", header: "Client" },
     { key: "stage", header: "Stage", render: (r) => <Badge label={r.stage} /> },
     { key: "channel", header: "Channel", render: (r) => <Badge label={r.channel} color="blue" /> },
+    { key: "meetingStatus", header: "Meeting", render: (r) => <MeetingCell d={r} /> },
     { key: "id", header: "", align: "right", width: "40px", render: () => <ChevronRight size={16} className="text-ink-300" /> },
   ];
 

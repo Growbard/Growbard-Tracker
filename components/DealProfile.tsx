@@ -140,7 +140,7 @@ export default function DealProfile({ id }: { id: string }) {
         {[
           { label: "Target Stage", value: deal.targetStage, icon: <Target size={15} className="text-brand-500" /> },
           { label: "Conversation", value: deal.conversationStatus, icon: <MessageSquare size={15} className="text-purple-500" /> },
-          { label: "Meeting", value: deal.meetingStatus, icon: <CalendarCheck size={15} className="text-green-500" /> },
+          { label: "Meeting", value: deal.meetingStatus === "Scheduled" && deal.meetingDate ? `Scheduled · ${deal.meetingDate}` : deal.meetingStatus, icon: <CalendarCheck size={15} className="text-green-500" /> },
           { label: "Next Step", value: deal.nextStep || "—", icon: <Flag size={15} className="text-amber-500" /> },
         ].map((t, i) => (
           <Card key={i} className="px-4 py-3.5">
@@ -159,6 +159,7 @@ export default function DealProfile({ id }: { id: string }) {
             <EditField label="Owner" value={deal.owner} onCommit={(v) => patch({ owner: v })} placeholder="Owner" />
             <SelectField label="Conversation" value={deal.conversationStatus} options={CONVERSATION_STATUSES} onCommit={(v) => patch({ conversationStatus: v })} />
             <SelectField label="Meeting" value={deal.meetingStatus} options={MEETING_STATUSES} onCommit={(v) => patch({ meetingStatus: v })} />
+            <EditField label="Meeting Date" value={deal.meetingDate} onCommit={(v) => patch({ meetingDate: v })} placeholder="e.g. Nov 2, 3:00 PM" />
             <SelectField label="Close / Done" value={deal.closeStatus} options={CLOSE_STATUSES} onCommit={(v) => patch({ closeStatus: v })} />
             <EditField label="Expected Close" value={deal.closeDate} onCommit={(v) => patch({ closeDate: v })} placeholder="e.g. Nov 5" />
             <EditField label="Deal Value ($)" type="number" value={String(deal.value)} onCommit={(v) => patch({ value: parseFloat(v) || 0 })} />

@@ -48,6 +48,7 @@ export interface Deal {
   website: string;
   conversationStatus: string; // Not Started / In Progress / Responsive / Gone Quiet
   meetingStatus: string;      // Not Scheduled / Scheduled / Completed / No-show
+  meetingDate: string;        // when the meeting is / was
   closeStatus: string;        // Open / Won / Lost
   nextStep: string;
   notes: string;
@@ -60,7 +61,7 @@ export const dealDefaults: Omit<Deal, "id"> = {
   name: "Opportunity", client: "Prospect", owner: "", stage: "New Leads",
   channel: "Cold Email", value: 0, probability: 10, closeDate: "",
   targetStage: "Qualified", contactName: "", email: "", phone: "", website: "",
-  conversationStatus: "Not Started", meetingStatus: "Not Scheduled", closeStatus: "Open",
+  conversationStatus: "Not Started", meetingStatus: "Not Scheduled", meetingDate: "", closeStatus: "Open",
   nextStep: "", notes: "", activities: [],
 };
 
@@ -272,7 +273,7 @@ export const defaultData: AppData = {
       stage: "Proposal", channel: "Cold Email", value: 4500, probability: 60, closeDate: "Nov 5",
       targetStage: "Negotiation", contactName: "John Miller", email: "john@acmeroofing.com",
       phone: "+1 (555) 201-4412", website: "acmeroofing.com",
-      conversationStatus: "In Progress", meetingStatus: "Completed", closeStatus: "Open",
+      conversationStatus: "In Progress", meetingStatus: "Completed", meetingDate: "Oct 18", closeStatus: "Open",
       nextStep: "Send revised proposal with Ads add-on", notes: "Price-sensitive. Interested in local SEO first, ads later.",
       activities: [
         { id: "a1", date: "Oct 22", note: "Sent proposal v1 — $4,500/mo retainer." },
@@ -285,7 +286,7 @@ export const defaultData: AppData = {
       stage: "Negotiation", channel: "Referral", value: 8000, probability: 75, closeDate: "Nov 8",
       targetStage: "Won", contactName: "Dr. Priya Shah", email: "priya@brightdental.com",
       phone: "+1 (555) 332-8890", website: "brightdental.com",
-      conversationStatus: "Responsive", meetingStatus: "Completed", closeStatus: "Open",
+      conversationStatus: "Responsive", meetingStatus: "Completed", meetingDate: "Oct 16", closeStatus: "Open",
       nextStep: "Finalize scope & timeline, send contract", notes: "Referred by Elite Septic. Wants launch before new year.",
       activities: [
         { id: "a1", date: "Oct 21", note: "Negotiating scope — wants booking integration." },
@@ -297,7 +298,7 @@ export const defaultData: AppData = {
       stage: "Qualified", channel: "LinkedIn", value: 2500, probability: 40, closeDate: "Nov 12",
       targetStage: "Proposal", contactName: "Dave Pearson", email: "dave@peakplumbing.com",
       phone: "+1 (555) 778-1200", website: "peakplumbing.com",
-      conversationStatus: "In Progress", meetingStatus: "Scheduled", closeStatus: "Open",
+      conversationStatus: "In Progress", meetingStatus: "Scheduled", meetingDate: "Nov 2", closeStatus: "Open",
       nextStep: "Discovery call on Nov 2", notes: "Found via LinkedIn. Currently with another agency, contract ends soon.",
       activities: [
         { id: "a1", date: "Oct 20", note: "Qualified — budget confirmed ~$2.5k/mo." },
@@ -309,7 +310,7 @@ export const defaultData: AppData = {
       stage: "New Leads", channel: "Instagram", value: 6000, probability: 20, closeDate: "Nov 20",
       targetStage: "Qualified", contactName: "Marcus Lee", email: "marcus@novafitness.com",
       phone: "+1 (555) 909-3321", website: "novafitness.com",
-      conversationStatus: "Not Started", meetingStatus: "Not Scheduled", closeStatus: "Open",
+      conversationStatus: "Not Started", meetingStatus: "Not Scheduled", meetingDate: "", closeStatus: "Open",
       nextStep: "Qualify budget & decision maker", notes: "Inbound DM from Instagram. New studio, limited budget.",
       activities: [
         { id: "a1", date: "Oct 23", note: "New inbound lead via Instagram." },
@@ -320,7 +321,7 @@ export const defaultData: AppData = {
       stage: "Proposal", channel: "Google Ads", value: 3000, probability: 55, closeDate: "Nov 7",
       targetStage: "Negotiation", contactName: "Dr. Sam Olin", email: "sam@urbandental.com",
       phone: "+1 (555) 445-7781", website: "urbandental.com",
-      conversationStatus: "Responsive", meetingStatus: "Completed", closeStatus: "Open",
+      conversationStatus: "Responsive", meetingStatus: "Completed", meetingDate: "Oct 12", closeStatus: "Open",
       nextStep: "Follow up on proposal by Oct 30", notes: "Came from our own Google Ads lead-gen. Wants quick results.",
       activities: [
         { id: "a1", date: "Oct 19", note: "Proposal sent — $3k/mo ad management." },
@@ -332,7 +333,7 @@ export const defaultData: AppData = {
       stage: "Won", channel: "Referral", value: 1800, probability: 100, closeDate: "Oct 22",
       targetStage: "Won", contactName: "Tina Brooks", email: "tina@greenleaf.com",
       phone: "+1 (555) 660-2210", website: "greenleaflandscaping.com",
-      conversationStatus: "Responsive", meetingStatus: "Completed", closeStatus: "Won",
+      conversationStatus: "Responsive", meetingStatus: "Completed", meetingDate: "Oct 15", closeStatus: "Won",
       nextStep: "Kickoff onboarding", notes: "Closed! Signed 6-month content retainer.",
       activities: [
         { id: "a1", date: "Oct 22", note: "Signed contract 🎉 — onboarding next." },
