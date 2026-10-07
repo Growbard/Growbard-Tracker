@@ -33,7 +33,11 @@ export default function PipelinePage() {
   const { data, setData } = useStore();
   const router = useRouter();
   const [filter, setFilter] = useState<FilterKey>("All");
-  const visibleDeals = data.deals.filter((d) => matchFilter(d, filter));
+  // Default ordering: Qualified first, then Won, then Lost, then everyone else.
+  const rank = (d: Deal) =>
+    matchFilter(d, "Qualified") ? 0 : matchFilter(d, "Won") ? 1 : matchFilter(d, "Lost") ? 2 : 3;
+  const ordered = [...data.deals].sort((a, b) => rank(a) - rank(b));
+  const visibleDeals = ordered.filter((d) => matchFilter(d, filter));
   const total = data.deals.reduce((a, d) => a + d.value, 0);
   const weighted = data.deals.reduce((a, d) => a + (d.value * d.probability) / 100, 0);
   const won = data.deals.filter((d) => d.closeStatus === "Won").reduce((a, d) => a + d.value, 0);
