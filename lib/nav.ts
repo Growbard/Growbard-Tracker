@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Inbox, Users, Send, Calendar, FileText, UserRound,
+  LayoutDashboard, Inbox, Users, Calendar, FileText, UserRound,
   HeartPulse, FileSignature, FolderKanban, ListTodo, CalendarDays, UsersRound,
   Globe, Megaphone, PenLine, Rocket, BarChart3, DollarSign, Wallet,
   ReceiptText, TrendingUp, Banknote, PieChart, Wrench, Truck, BookText,
@@ -29,7 +29,6 @@ export const navSections: NavSection[] = [
     heading: "Sales",
     items: [
       { label: "CRM & Pipeline", icon: Users, href: "/pipeline", subtitle: "Track deals through every stage of your pipeline." },
-      { label: "Outreach", icon: Send, href: "/outreach", subtitle: "Cold email and social outreach performance." },
       { label: "Meetings", icon: Calendar, href: "/meetings", subtitle: "Upcoming sales and client meetings." },
       { label: "Proposals", icon: FileText, href: "/proposals", subtitle: "Proposals sent, won, and in progress." },
     ],
