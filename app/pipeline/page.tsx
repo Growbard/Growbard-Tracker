@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/lib/store";
 import KpiRow from "@/components/ui/KpiRow";
@@ -7,6 +8,15 @@ import DataTable, { Column } from "@/components/ui/DataTable";
 import Badge from "@/components/ui/Badge";
 import { ChevronRight, Plus } from "lucide-react";
 import type { Deal } from "@/lib/data";
+
+type FilterKey = "Qualified" | "Won" | "Lost" | "All";
+const FILTERS: FilterKey[] = ["Qualified", "Won", "Lost", "All"];
+const matchFilter = (d: Deal, f: FilterKey) => {
+  if (f === "All") return true;
+  if (f === "Qualified") return d.stage === "Qualified";
+  if (f === "Won") return d.closeStatus === "Won" || d.stage === "Won";
+  return d.closeStatus === "Lost" || d.stage === "Lost"; // Lost
+};
 
 function newDeal(): Deal {
   const id = "dl" + Date.now();
@@ -22,6 +32,8 @@ function newDeal(): Deal {
 export default function PipelinePage() {
   const { data, setData } = useStore();
   const router = useRouter();
+  const [filter, setFilter] = useState<FilterKey>("All");
+  const visibleDeals = data.deals.filter((d) => matchFilter(d, filter));
   const total = data.deals.reduce((a, d) => a + d.value, 0);
   const weighted = data.deals.reduce((a, d) => a + (d.value * d.probability) / 100, 0);
   const won = data.deals.filter((d) => d.closeStatus === "Won").reduce((a, d) => a + d.value, 0);
@@ -51,15 +63,33 @@ export default function PipelinePage() {
       <DataTable
         title="All Deals"
         columns={columns}
-        rows={data.deals}
+        rows={visibleDeals}
         onRowClick={(r) => router.push(`/pipeline/${r.id}`)}
         right={
-          <button onClick={addProspect}
-            className="flex items-center gap-1.5 rounded-lg bg-brand-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-brand-700">
-            <Plus size={15} /> New Prospect
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0.5 rounded-lg bg-ink-100 p-0.5">
+              {FILTERS.map((f) => {
+                const count = data.deals.filter((d) => matchFilter(d, f)).length;
+                const active = filter === f;
+                return (
+                  <button key={f} onClick={() => setFilter(f)}
+                    className={`rounded-md px-2.5 py-1 text-[12px] transition-colors ${
+                      active ? "bg-white font-medium text-ink-900 shadow-sm" : "text-ink-500 hover:text-ink-700"
+                    }`}>
+                    {f} <span className={active ? "text-ink-400" : "text-ink-300"}>{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <button onClick={addProspect}
+              className="flex items-center gap-1.5 rounded-lg bg-brand-600 px-3 py-1.5 text-[13px] font-medium text-white hover:bg-brand-700">
+              <Plus size={15} /> New Prospect
+            </button>
+          </div>
         }
-        footer={<span className="text-ink-500">Click any prospect to open their full profile.</span>}
+        footer={<span className="text-ink-500">
+          {filter === "All" ? "Click any prospect to open their full profile." : `Showing ${visibleDeals.length} ${filter.toLowerCase()} deal${visibleDeals.length === 1 ? "" : "s"}. Click any to open the profile.`}
+        </span>}
       />
     </div>
   );
