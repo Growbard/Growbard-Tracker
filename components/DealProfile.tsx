@@ -39,6 +39,7 @@ export default function DealProfile({ id }: { id: string }) {
     );
   }
 
+  const activities = deal.activities ?? [];
   const weighted = Math.round((deal.value * deal.probability) / 100);
   const stageIdx = PIPELINE.indexOf(deal.stage);
   const alreadyClient = data.clients.some((c) => c.name.toLowerCase() === deal.client.toLowerCase());
@@ -202,8 +203,8 @@ export default function DealProfile({ id }: { id: string }) {
           </button>
         </div>
         <div className="relative space-y-2 before:absolute before:left-[5px] before:top-2 before:h-[calc(100%-1rem)] before:w-px before:bg-ink-100">
-          {deal.activities.length === 0 && <div className="py-4 text-center text-[13px] text-ink-400">No activity yet. Add your first touchpoint.</div>}
-          {deal.activities.map((act) => (
+          {activities.length === 0 && <div className="py-4 text-center text-[13px] text-ink-400">No activity yet. Add your first touchpoint.</div>}
+          {activities.map((act) => (
             <div key={act.id} className="relative flex items-start gap-3 rounded-lg pl-5">
               <span className="absolute left-0 top-2.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-brand-500" />
               <div className="w-24 shrink-0 pt-1">

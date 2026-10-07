@@ -3,7 +3,7 @@
 import React, {
   createContext, useContext, useEffect, useRef, useState, useCallback,
 } from "react";
-import { DashboardData, defaultData } from "./data";
+import { DashboardData, defaultData, hydrate } from "./data";
 
 const STORAGE_KEY = "growbard-dashboard-data-v1";
 
@@ -39,7 +39,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     let cached: DashboardData | null = null;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) cached = { ...defaultData, ...JSON.parse(raw) };
+      if (raw) cached = hydrate(JSON.parse(raw));
     } catch { /* ignore */ }
     if (cached) setDataState(cached);
 
@@ -49,7 +49,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const json = await res.json();
         if (json.shared) setShared(true);
         if (json.data) {
-          setDataState({ ...defaultData, ...json.data });
+          setDataState(hydrate(json.data));
           setSync("synced");
         } else if (json.shared) {
           // shared store exists but is empty -> seed it with what we have
@@ -109,7 +109,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   const exportJson = useCallback(() => JSON.stringify(data, null, 2), [data]);
   const importJson = useCallback((json: string) => {
-    try { setDataState({ ...defaultData, ...JSON.parse(json) }); return true; }
+    try { setDataState(hydrate(JSON.parse(json))); return true; }
     catch { return false; }
   }, []);
 

@@ -54,6 +54,16 @@ export interface Deal {
   activities: DealActivity[]; // conversation / touchpoint log
 }
 
+// Safe defaults for every Deal field — used to fill in older/partial saved
+// records so the profile page never hits an undefined field (e.g. activities).
+export const dealDefaults: Omit<Deal, "id"> = {
+  name: "Opportunity", client: "Prospect", owner: "", stage: "New Leads",
+  channel: "Cold Email", value: 0, probability: 10, closeDate: "",
+  targetStage: "Qualified", contactName: "", email: "", phone: "", website: "",
+  conversationStatus: "Not Started", meetingStatus: "Not Scheduled", closeStatus: "Open",
+  nextStep: "", notes: "", activities: [],
+};
+
 export const DEAL_STAGES = ["New Leads", "Qualified", "Proposal", "Negotiation", "Won", "Lost"];
 export const DEAL_CHANNELS = ["Cold Email", "LinkedIn", "Cold Call", "Referral", "Instagram", "Google Ads", "Website", "Event", "Other"];
 export const CONVERSATION_STATUSES = ["Not Started", "In Progress", "Responsive", "Gone Quiet"];
@@ -536,3 +546,17 @@ export const defaultData: AppData = {
     { id: "in5", from: "GreenLeaf Landscaping", subject: "Onboarding docs", preview: "Here are the brand assets you requested for the content work.", time: "Yesterday", unread: false },
   ],
 };
+
+// Normalize any partial/old saved data into a complete, safe AppData.
+// - fills every missing top-level key from defaults
+// - ensures each deal has all fields (so the profile page never crashes)
+export function hydrate(parsed: Partial<AppData> | null | undefined): AppData {
+  const merged = { ...defaultData, ...(parsed || {}) } as AppData;
+  const deals = Array.isArray(parsed?.deals) ? parsed!.deals : defaultData.deals;
+  merged.deals = deals.map((d) => ({
+    ...dealDefaults,
+    ...d,
+    activities: Array.isArray((d as Deal).activities) ? (d as Deal).activities : [],
+  }));
+  return merged;
+}
