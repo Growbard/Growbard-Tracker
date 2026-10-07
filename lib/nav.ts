@@ -1,6 +1,6 @@
 import {
-  LayoutDashboard, Inbox, Users, Calendar, UserRound,
-  HeartPulse, FileSignature, FolderKanban, ListTodo, CalendarDays, UsersRound,
+  LayoutDashboard, Inbox, Users, Calendar,
+  FileSignature, FolderKanban, ListTodo, CalendarDays, UsersRound,
   Globe, Megaphone, PenLine, Rocket, BarChart3, DollarSign, Wallet,
   ReceiptText, TrendingUp, Banknote, PieChart, Wrench, Truck, BookText,
   FileBarChart, Settings,
@@ -33,20 +33,13 @@ export const navSections: NavSection[] = [
     ],
   },
   {
-    heading: "Clients",
-    items: [
-      { label: "All Clients", icon: UserRound, href: "/clients", subtitle: "Every client account and their status." },
-      { label: "Client Health", icon: HeartPulse, href: "/client-health", subtitle: "Health scores and retention risk." },
-      { label: "Contracts", icon: FileSignature, href: "/contracts", subtitle: "Active, expiring, and expired contracts." },
-    ],
-  },
-  {
     heading: "Projects",
     items: [
       { label: "Projects", icon: FolderKanban, href: "/projects", subtitle: "Delivery status across all client projects." },
       { label: "Tasks", icon: ListTodo, href: "/tasks", subtitle: "Everything your team is working on." },
       { label: "Calendar", icon: CalendarDays, href: "/calendar", subtitle: "Meetings, deadlines, and tasks by date." },
       { label: "Team & Capacity", icon: UsersRound, href: "/team", subtitle: "Workload and utilization across the team." },
+      { label: "Contracts", icon: FileSignature, href: "/contracts", subtitle: "Active, expiring, and expired contracts." },
     ],
   },
   {
