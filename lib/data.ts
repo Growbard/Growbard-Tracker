@@ -113,6 +113,7 @@ export interface AppData {
   dateLabel: string;
   currency: string;
   timezone: string;
+  calendarEmbedUrl: string; // Google Calendar (or Calendly) embed URL for the Meetings page
 
   topStats: StatCard[];
   miniStats: MiniStat[];
@@ -169,6 +170,7 @@ export const defaultData: AppData = {
   dateLabel: "Thu, Oct 24, 2024",
   currency: "USD",
   timezone: "Asia/Dhaka",
+  calendarEmbedUrl: "",
 
   topStats: [
     { id: "mrr", label: "Monthly Recurring Revenue", value: 18400, format: "currency", changePct: 12, trend: "up", accent: "#3b82f6", spark: [12, 14, 13, 16, 15, 18, 17, 19, 18.4], icon: "DollarSign" },
