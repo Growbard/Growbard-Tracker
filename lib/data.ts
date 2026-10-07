@@ -29,7 +29,36 @@ export interface DeadlineRow { id: string; title: string; client: string; date: 
 export interface ClientProfitRow { id: string; client: string; revenue: number; cost: number; }
 
 /* ---------------- Sales ---------------- */
-export interface Deal { id: string; name: string; client: string; stage: string; value: number; owner: string; closeDate: string; probability: number; }
+export interface DealActivity { id: string; date: string; note: string; }
+export interface Deal {
+  id: string;
+  name: string;            // what we're pitching
+  client: string;          // prospect / company name
+  owner: string;           // who on our team owns it
+  stage: string;           // current pipeline stage
+  channel: string;         // where we're targeting them
+  value: number;
+  probability: number;
+  closeDate: string;
+  // profile / tracking fields
+  targetStage: string;     // where we want to move them next
+  contactName: string;
+  email: string;
+  phone: string;
+  website: string;
+  conversationStatus: string; // Not Started / In Progress / Responsive / Gone Quiet
+  meetingStatus: string;      // Not Scheduled / Scheduled / Completed / No-show
+  closeStatus: string;        // Open / Won / Lost
+  nextStep: string;
+  notes: string;
+  activities: DealActivity[]; // conversation / touchpoint log
+}
+
+export const DEAL_STAGES = ["New Leads", "Qualified", "Proposal", "Negotiation", "Won", "Lost"];
+export const DEAL_CHANNELS = ["Cold Email", "LinkedIn", "Cold Call", "Referral", "Instagram", "Google Ads", "Website", "Event", "Other"];
+export const CONVERSATION_STATUSES = ["Not Started", "In Progress", "Responsive", "Gone Quiet"];
+export const MEETING_STATUSES = ["Not Scheduled", "Scheduled", "Completed", "No-show"];
+export const CLOSE_STATUSES = ["Open", "Won", "Lost"];
 export interface OutreachSeq { id: string; name: string; channel: string; sent: number; opened: number; replied: number; booked: number; }
 export interface Meeting { id: string; title: string; client: string; date: string; time: string; type: string; owner: string; }
 export interface Proposal { id: string; title: string; client: string; value: number; status: "Draft" | "Sent" | "Won" | "Lost"; sentDate: string; }
@@ -228,12 +257,78 @@ export const defaultData: AppData = {
 
   /* ---------------- Sales ---------------- */
   deals: [
-    { id: "dl1", name: "SEO + Ads retainer", client: "Acme Roofing", stage: "Proposal", value: 4500, owner: "Alex Johnson", closeDate: "Nov 5", probability: 60 },
-    { id: "dl2", name: "Website redesign", client: "Bright Dental", stage: "Negotiation", value: 8000, owner: "Sarah Kim", closeDate: "Nov 8", probability: 75 },
-    { id: "dl3", name: "Local SEO package", client: "Peak Plumbing", stage: "Qualified", value: 2500, owner: "Mike Chen", closeDate: "Nov 12", probability: 40 },
-    { id: "dl4", name: "Full funnel growth", client: "Nova Fitness", stage: "New Leads", value: 6000, owner: "Alex Johnson", closeDate: "Nov 20", probability: 20 },
-    { id: "dl5", name: "PPC management", client: "Urban Dental", stage: "Proposal", value: 3000, owner: "Emily Davis", closeDate: "Nov 7", probability: 55 },
-    { id: "dl6", name: "Content retainer", client: "GreenLeaf Landscaping", stage: "Won", value: 1800, owner: "Sarah Kim", closeDate: "Oct 22", probability: 100 },
+    {
+      id: "dl1", name: "SEO + Ads retainer", client: "Acme Roofing", owner: "Alex Johnson",
+      stage: "Proposal", channel: "Cold Email", value: 4500, probability: 60, closeDate: "Nov 5",
+      targetStage: "Negotiation", contactName: "John Miller", email: "john@acmeroofing.com",
+      phone: "+1 (555) 201-4412", website: "acmeroofing.com",
+      conversationStatus: "In Progress", meetingStatus: "Completed", closeStatus: "Open",
+      nextStep: "Send revised proposal with Ads add-on", notes: "Price-sensitive. Interested in local SEO first, ads later.",
+      activities: [
+        { id: "a1", date: "Oct 22", note: "Sent proposal v1 — $4,500/mo retainer." },
+        { id: "a2", date: "Oct 18", note: "Discovery call done. Pain: not ranking locally." },
+        { id: "a3", date: "Oct 14", note: "Cold email reply — booked a call." },
+      ],
+    },
+    {
+      id: "dl2", name: "Website redesign", client: "Bright Dental", owner: "Sarah Kim",
+      stage: "Negotiation", channel: "Referral", value: 8000, probability: 75, closeDate: "Nov 8",
+      targetStage: "Won", contactName: "Dr. Priya Shah", email: "priya@brightdental.com",
+      phone: "+1 (555) 332-8890", website: "brightdental.com",
+      conversationStatus: "Responsive", meetingStatus: "Completed", closeStatus: "Open",
+      nextStep: "Finalize scope & timeline, send contract", notes: "Referred by Elite Septic. Wants launch before new year.",
+      activities: [
+        { id: "a1", date: "Oct 21", note: "Negotiating scope — wants booking integration." },
+        { id: "a2", date: "Oct 16", note: "Proposal walkthrough call went well." },
+      ],
+    },
+    {
+      id: "dl3", name: "Local SEO package", client: "Peak Plumbing", owner: "Mike Chen",
+      stage: "Qualified", channel: "LinkedIn", value: 2500, probability: 40, closeDate: "Nov 12",
+      targetStage: "Proposal", contactName: "Dave Pearson", email: "dave@peakplumbing.com",
+      phone: "+1 (555) 778-1200", website: "peakplumbing.com",
+      conversationStatus: "In Progress", meetingStatus: "Scheduled", closeStatus: "Open",
+      nextStep: "Discovery call on Nov 2", notes: "Found via LinkedIn. Currently with another agency, contract ends soon.",
+      activities: [
+        { id: "a1", date: "Oct 20", note: "Qualified — budget confirmed ~$2.5k/mo." },
+        { id: "a2", date: "Oct 15", note: "LinkedIn DM reply, exchanged info." },
+      ],
+    },
+    {
+      id: "dl4", name: "Full funnel growth", client: "Nova Fitness", owner: "Alex Johnson",
+      stage: "New Leads", channel: "Instagram", value: 6000, probability: 20, closeDate: "Nov 20",
+      targetStage: "Qualified", contactName: "Marcus Lee", email: "marcus@novafitness.com",
+      phone: "+1 (555) 909-3321", website: "novafitness.com",
+      conversationStatus: "Not Started", meetingStatus: "Not Scheduled", closeStatus: "Open",
+      nextStep: "Qualify budget & decision maker", notes: "Inbound DM from Instagram. New studio, limited budget.",
+      activities: [
+        { id: "a1", date: "Oct 23", note: "New inbound lead via Instagram." },
+      ],
+    },
+    {
+      id: "dl5", name: "PPC management", client: "Urban Dental", owner: "Emily Davis",
+      stage: "Proposal", channel: "Google Ads", value: 3000, probability: 55, closeDate: "Nov 7",
+      targetStage: "Negotiation", contactName: "Dr. Sam Olin", email: "sam@urbandental.com",
+      phone: "+1 (555) 445-7781", website: "urbandental.com",
+      conversationStatus: "Responsive", meetingStatus: "Completed", closeStatus: "Open",
+      nextStep: "Follow up on proposal by Oct 30", notes: "Came from our own Google Ads lead-gen. Wants quick results.",
+      activities: [
+        { id: "a1", date: "Oct 19", note: "Proposal sent — $3k/mo ad management." },
+        { id: "a2", date: "Oct 12", note: "Intro call — running ads themselves now." },
+      ],
+    },
+    {
+      id: "dl6", name: "Content retainer", client: "GreenLeaf Landscaping", owner: "Sarah Kim",
+      stage: "Won", channel: "Referral", value: 1800, probability: 100, closeDate: "Oct 22",
+      targetStage: "Won", contactName: "Tina Brooks", email: "tina@greenleaf.com",
+      phone: "+1 (555) 660-2210", website: "greenleaflandscaping.com",
+      conversationStatus: "Responsive", meetingStatus: "Completed", closeStatus: "Won",
+      nextStep: "Kickoff onboarding", notes: "Closed! Signed 6-month content retainer.",
+      activities: [
+        { id: "a1", date: "Oct 22", note: "Signed contract 🎉 — onboarding next." },
+        { id: "a2", date: "Oct 15", note: "Verbal yes on the call." },
+      ],
+    },
   ],
 
   outreach: [

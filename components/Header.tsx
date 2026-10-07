@@ -12,7 +12,10 @@ export default function Header({ onMenu }: { onMenu?: () => void }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const meta = routeMeta[pathname] ?? { label: "Dashboard", subtitle: "" };
+  const isDealProfile = pathname.startsWith("/pipeline/");
+  const meta = routeMeta[pathname] ?? (isDealProfile
+    ? { label: "Prospect Profile", subtitle: "Full details and tracking for this prospect." }
+    : { label: "Dashboard", subtitle: "" });
 
   const handleExport = () => {
     const blob = new Blob([exportJson()], { type: "application/json" });

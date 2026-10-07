@@ -26,13 +26,15 @@ interface Props<T extends { id: string }> {
   rows: T[];
   /** called when an editable cell commits a new value */
   onEdit?: (rowId: string, key: keyof T & string, raw: string) => void;
+  /** when set, rows become clickable */
+  onRowClick?: (row: T) => void;
   right?: React.ReactNode;
   footer?: React.ReactNode;
   dense?: boolean;
 }
 
 export default function DataTable<T extends { id: string }>({
-  title, columns, rows, onEdit, right, footer, dense,
+  title, columns, rows, onEdit, onRowClick, right, footer, dense,
 }: Props<T>) {
   const alignCls = (a?: string) => (a === "right" ? "text-right" : a === "center" ? "text-center" : "text-left");
 
@@ -57,7 +59,9 @@ export default function DataTable<T extends { id: string }>({
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} className="border-b border-ink-100 last:border-0 hover:bg-ink-50/60">
+              <tr key={row.id}
+                onClick={onRowClick ? () => onRowClick(row) : undefined}
+                className={`border-b border-ink-100 last:border-0 hover:bg-ink-50/60 ${onRowClick ? "cursor-pointer" : ""}`}>
                 {columns.map((c) => {
                   const raw = row[c.key] as unknown;
                   let content: React.ReactNode;
