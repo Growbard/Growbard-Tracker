@@ -30,6 +30,7 @@ export interface ClientProfitRow { id: string; client: string; revenue: number; 
 
 /* ---------------- Sales ---------------- */
 export interface DealActivity { id: string; date: string; note: string; }
+export interface ProposalFile { id: string; name: string; url: string; size: number; uploadedAt: string; }
 export interface Deal {
   id: string;
   name: string;            // what we're pitching
@@ -53,6 +54,7 @@ export interface Deal {
   nextStep: string;
   notes: string;
   activities: DealActivity[]; // conversation / touchpoint log
+  proposalFiles: ProposalFile[]; // uploaded proposal docs / PDFs
 }
 
 // Safe defaults for every Deal field — used to fill in older/partial saved
@@ -62,7 +64,7 @@ export const dealDefaults: Omit<Deal, "id"> = {
   channel: "Cold Email", value: 0, probability: 10, closeDate: "",
   targetStage: "Qualified", contactName: "", email: "", phone: "", website: "",
   conversationStatus: "Not Started", meetingStatus: "Not Scheduled", meetingDate: "", closeStatus: "Open",
-  nextStep: "", notes: "", activities: [],
+  nextStep: "", notes: "", activities: [], proposalFiles: [],
 };
 
 export const DEAL_STAGES = ["New Leads", "Qualified", "Proposal", "Negotiation", "Won", "Lost"];
@@ -282,6 +284,7 @@ export const defaultData: AppData = {
         { id: "a2", date: "Oct 18", note: "Discovery call done. Pain: not ranking locally." },
         { id: "a3", date: "Oct 14", note: "Cold email reply — booked a call." },
       ],
+      proposalFiles: [],
     },
     {
       id: "dl2", name: "Website redesign", client: "Bright Dental", owner: "Sarah Kim",
@@ -294,6 +297,7 @@ export const defaultData: AppData = {
         { id: "a1", date: "Oct 21", note: "Negotiating scope — wants booking integration." },
         { id: "a2", date: "Oct 16", note: "Proposal walkthrough call went well." },
       ],
+      proposalFiles: [],
     },
     {
       id: "dl3", name: "Local SEO package", client: "Peak Plumbing", owner: "Mike Chen",
@@ -306,6 +310,7 @@ export const defaultData: AppData = {
         { id: "a1", date: "Oct 20", note: "Qualified — budget confirmed ~$2.5k/mo." },
         { id: "a2", date: "Oct 15", note: "LinkedIn DM reply, exchanged info." },
       ],
+      proposalFiles: [],
     },
     {
       id: "dl4", name: "Full funnel growth", client: "Nova Fitness", owner: "Alex Johnson",
@@ -317,6 +322,7 @@ export const defaultData: AppData = {
       activities: [
         { id: "a1", date: "Oct 23", note: "New inbound lead via Instagram." },
       ],
+      proposalFiles: [],
     },
     {
       id: "dl5", name: "PPC management", client: "Urban Dental", owner: "Emily Davis",
@@ -329,6 +335,7 @@ export const defaultData: AppData = {
         { id: "a1", date: "Oct 19", note: "Proposal sent — $3k/mo ad management." },
         { id: "a2", date: "Oct 12", note: "Intro call — running ads themselves now." },
       ],
+      proposalFiles: [],
     },
     {
       id: "dl6", name: "Content retainer", client: "GreenLeaf Landscaping", owner: "Sarah Kim",
@@ -341,6 +348,7 @@ export const defaultData: AppData = {
         { id: "a1", date: "Oct 22", note: "Signed contract 🎉 — onboarding next." },
         { id: "a2", date: "Oct 15", note: "Verbal yes on the call." },
       ],
+      proposalFiles: [],
     },
   ],
 
@@ -560,6 +568,7 @@ export function hydrate(parsed: Partial<AppData> | null | undefined): AppData {
     ...dealDefaults,
     ...d,
     activities: Array.isArray((d as Deal).activities) ? (d as Deal).activities : [],
+    proposalFiles: Array.isArray((d as Deal).proposalFiles) ? (d as Deal).proposalFiles : [],
   }));
   return merged;
 }

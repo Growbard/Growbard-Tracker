@@ -47,7 +47,7 @@ function newDeal(): Deal {
     stage: "New Leads", channel: "Cold Email", value: 0, probability: 10, closeDate: "",
     targetStage: "Qualified", contactName: "", email: "", phone: "", website: "",
     conversationStatus: "Not Started", meetingStatus: "Not Scheduled", meetingDate: "", closeStatus: "Open",
-    nextStep: "", notes: "", activities: [],
+    nextStep: "", notes: "", activities: [], proposalFiles: [],
   };
 }
 

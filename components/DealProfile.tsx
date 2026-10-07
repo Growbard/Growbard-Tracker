@@ -1,7 +1,9 @@
 "use client";
 
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { upload } from "@vercel/blob/client";
 import { useStore } from "@/lib/store";
 import { Card } from "./Card";
 import Badge from "./ui/Badge";
@@ -14,7 +16,9 @@ import {
 import {
   ArrowLeft, Plus, Trash2, Mail, Phone, Globe, User, Building2, Check,
   UserPlus, Target, MessageSquare, CalendarCheck, Flag,
+  FileText, Upload, ExternalLink, Loader2,
 } from "lucide-react";
+import type { ProposalFile } from "@/lib/data";
 
 const PIPELINE = ["New Leads", "Qualified", "Proposal", "Negotiation", "Won"];
 
@@ -27,6 +31,32 @@ export default function DealProfile({ id }: { id: string }) {
     setData((prev) => ({ ...prev, deals: prev.deals.map((d) => (d.id === id ? { ...d, ...p } : d)) }));
   const setActivities = (fn: (a: DealActivity[]) => DealActivity[]) =>
     patch({ activities: fn(deal?.activities ?? []) });
+
+  const [uploading, setUploading] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  const onPickFile = async (file: File | undefined) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      const blob = await upload(file.name, file, { access: "public", handleUploadUrl: "/api/upload" });
+      const rec: ProposalFile = {
+        id: "f" + Date.now(),
+        name: file.name,
+        url: blob.url,
+        size: file.size,
+        uploadedAt: new Date().toLocaleDateString(),
+      };
+      patch({ proposalFiles: [...(deal?.proposalFiles ?? []), rec] });
+    } catch (e) {
+      alert("Upload failed: " + (e as Error).message);
+    } finally {
+      setUploading(false);
+      if (fileInput.current) fileInput.current.value = "";
+    }
+  };
+  const removeFile = (fid: string) =>
+    patch({ proposalFiles: (deal?.proposalFiles ?? []).filter((f) => f.id !== fid) });
 
   if (!deal) {
     return (
@@ -187,6 +217,50 @@ export default function DealProfile({ id }: { id: string }) {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* Proposal / documents — upload PDFs & docs to revisit later */}
+          <div className="mt-4 border-t border-ink-100 pt-4">
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-[12px] font-semibold uppercase tracking-wide text-ink-400">Proposal &amp; Documents</span>
+              <input ref={fileInput} type="file" accept=".pdf,.doc,.docx,image/*" className="hidden"
+                onChange={(e) => onPickFile(e.target.files?.[0])} />
+              <button onClick={() => fileInput.current?.click()} disabled={uploading}
+                className="flex items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-2.5 py-1.5 text-[12px] text-ink-700 hover:bg-ink-50 disabled:opacity-50">
+                {uploading ? <><Loader2 size={13} className="animate-spin" /> Uploading…</> : <><Upload size={13} /> Upload</>}
+              </button>
+            </div>
+
+            {(deal.proposalFiles ?? []).length === 0 ? (
+              <button onClick={() => fileInput.current?.click()}
+                className="flex w-full flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-ink-200 bg-ink-50/50 px-4 py-5 text-center text-ink-400 hover:bg-ink-50">
+                <FileText size={22} />
+                <span className="text-[12px] font-medium text-ink-500">Upload proposal PDF / doc</span>
+                <span className="text-[11px]">Click to add — you can reopen it anytime. (PDF, DOC, image · up to 25MB)</span>
+              </button>
+            ) : (
+              <div className="space-y-1.5">
+                {(deal.proposalFiles ?? []).map((f) => (
+                  <div key={f.id} className="flex items-center gap-2.5 rounded-lg border border-ink-100 px-3 py-2">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-red-50 text-red-500">
+                      <FileText size={15} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-[12.5px] font-medium text-ink-900">{f.name}</div>
+                      <div className="text-[11px] text-ink-400">{(f.size / 1024).toFixed(0)} KB · {f.uploadedAt}</div>
+                    </div>
+                    <a href={f.url} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-1 rounded-md px-2 py-1 text-[12px] text-brand-600 hover:bg-brand-50" title="Open">
+                      <ExternalLink size={13} /> Open
+                    </a>
+                    <button onClick={() => removeFile(f.id)}
+                      className="rounded p-1 text-ink-300 hover:bg-red-50 hover:text-red-500" title="Remove">
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </Section>
       </div>
