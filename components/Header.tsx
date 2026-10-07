@@ -2,13 +2,13 @@
 
 import React, { useRef } from "react";
 import { usePathname } from "next/navigation";
-import { Sun, CalendarDays, Bell, Pencil, Check, RotateCcw, Download, Upload, Menu } from "lucide-react";
+import { Sun, CalendarDays, Bell, Pencil, Check, RotateCcw, Download, Upload, Menu, Cloud, CloudOff, Loader2 } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { routeMeta } from "@/lib/nav";
 import Editable from "./Editable";
 
 export default function Header({ onMenu }: { onMenu?: () => void }) {
-  const { data, setData, editMode, setEditMode, reset, exportJson, importJson } = useStore();
+  const { data, setData, editMode, setEditMode, reset, exportJson, importJson, sync, shared } = useStore();
   const fileRef = useRef<HTMLInputElement>(null);
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -93,6 +93,19 @@ export default function Header({ onMenu }: { onMenu?: () => void }) {
           <Editable value={data.dateLabel} display={<span>{data.dateLabel}</span>}
             onCommit={(raw) => setData((p) => ({ ...p, dateLabel: raw }))} />
         </div>
+
+        {shared && (
+          <div className="hidden items-center gap-1.5 rounded-lg border border-ink-200 bg-white px-2.5 py-2 text-[12px] md:flex"
+            title="Changes are shared with everyone who opens this dashboard">
+            {sync === "saving" ? (
+              <><Loader2 size={13} className="animate-spin text-brand-500" /><span className="text-ink-500">Saving…</span></>
+            ) : sync === "offline" ? (
+              <><CloudOff size={13} className="text-amber-500" /><span className="text-ink-500">Offline</span></>
+            ) : (
+              <><Cloud size={13} className="text-green-500" /><span className="text-ink-500">Shared</span></>
+            )}
+          </div>
+        )}
 
         <button className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-ink-200 bg-white text-ink-500 hover:bg-ink-50">
           <Bell size={16} />
